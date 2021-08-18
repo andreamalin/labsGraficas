@@ -3,6 +3,8 @@ LAB 01 - GRAFICAS POR COMPUTADOR
 Andrea Amaya 19357
 '''
 import struct
+from vectors import *
+from obj import Obj
 
 def char(c):
     # char -> entero 1byte
@@ -46,6 +48,11 @@ class Renderer(object):
     def glClear(self, color = None): 
         self.framebuffer = [
             [color or BLACK for x in range(self.width)]
+            for y in range(self.height)
+        ]
+        
+        self.zbuffer = [
+            [-99999 for x in range(self.width)]
             for y in range(self.height)
         ]
     
@@ -132,13 +139,20 @@ class Renderer(object):
             else:
                 points.append((x, y))
 
-            offset += (dy/dx) * 2 * dx
+            try:
+                div = dy/dx
+            except:
+                div = 0
+            offset += div * 2 * dx
+
             if offset >= threshold:
                 y += 1 if y0 < y1 else -1
                 threshold += 1 * 2 * dx
 
         for point in points:
-            self.glVertex(*point, BLACK)
+            x = point[1]
+            y = point[0]
+            self.glVertex(x, y, BLUE)
 
     def floodfill(self, x, y, oldColor, newColor):
         puntos = [(x, y)]
@@ -169,6 +183,68 @@ class Renderer(object):
             puntos.append((x, y + 1))  # abajo del punto actual
             puntos.append((x, y - 1))  # arriba del punto actual
 
+
+    # Triangulos
+    def transform(self, vertex, translate=(0,0,0), scale=(1,1,1)):
+        return V3 (
+            round((vertex[0] + translate[0]) * scale[0]),
+            round((vertex[1] + translate[1]) * scale[1]),
+            round((vertex[2] + translate[2]) * scale[2]),
+        )
+        
+
+    # Pintar
+    def load(self, filename, translate, scale):
+        model = Obj(filename)
+        self.light = norm(V3(0, -3, 1))
+        
+        for face in model.faces:
+            vcount = len(face)
+
+
+            if vcount == 3:
+                f1 = face[0][0] - 1
+                f2 = face[1][0] - 1
+                f3 = face[2][0] - 1
+
+
+                a = self.transform(model.vertices[f1], translate, scale)
+                b = self.transform(model.vertices[f2], translate, scale)
+                c = self.transform(model.vertices[f3], translate, scale)
+
+                normal = norm(cross(sub(b, a), sub(c, a)))
+
+                intensity = dot(normal, self.light)
+
+                grey = round(200 * intensity)
+
+                if intensity < 0:
+                    continue
+                    
+                self.triangle(a, b, c, color(grey, int(grey*0.5), grey*0))
+
+    def triangle(self, A, B, C, color=None):
+        xmin, xmax, ymin, ymax = bbox(A, B, C)
+
+        for x in range(xmin, xmax + 1):
+            for y in range(ymin, ymax + 1):
+                    P = V2(x, y)
+                    w, v, u = barycentric(A, B, C, P)
+
+                    if (w < 0 or v < 0 or u < 0):
+                        continue
+
+                    z = A.z * w + B.z * v + C.z * u
+
+
+                    try:
+                        if z > self.zbuffer[x][y]:
+                            self.glVertex(y, x, color)
+                            self.zbuffer[x][y] = z
+                    except:
+                        pass
+
+
 # Inicializo el framebuffer
 def glCreateWindow(width, height):
     return Renderer(width, height)
@@ -182,48 +258,8 @@ r = glCreateWindow(800, 800)
 # r.glClear()
 r.glClearColor(0.7, 0.9, 1)
 
-# Pinto las lineas
-p1 = [(165, 380), (185, 360), (180, 330), (207, 345), (233, 330), (230, 360), (250, 380), (220, 385), (205, 410), (193, 383)]
-p2 = [(321, 335), (288, 286), (339, 251), (374, 302)]
-p3 = [(377, 249), (411, 197), (436, 249)]
-p4 = [(413, 177), (448, 159), (502, 88), (553, 53), (535, 36), (676, 37), (660, 52),
-(750, 145), (761, 179), (672, 192), (659, 214), (615, 214), (632, 230), (580, 230),
-(597, 215), (552, 214), (517, 144), (466, 180)]
-p5 = [(682, 175), (708, 120), (735, 148), (739, 170)]
 
-for i in range(len(p1)):
-    x1 ,y1 = p1[i]
-    x2, y2 = p1[(i + 1) % len(p1)]
-    r.glLine(x1, y1, x2, y2)
-
-for i in range(len(p2)):
-    x1 ,y1 = p2[i]
-    x2, y2 = p2[(i + 1) % len(p2)]
-    r.glLine(x1, y1, x2, y2)
-
-for i in range(len(p3)):
-    x1 ,y1 = p3[i]
-    x2, y2 = p3[(i + 1) % len(p3)]
-    r.glLine(x1, y1, x2, y2)
-    
-for i in range(len(p4)):
-    x1 ,y1 = p4[i]
-    x2, y2 = p4[(i + 1) % len(p4)]
-    r.glLine(x1, y1, x2, y2)
-
-for i in range(len(p5)):
-    x1 ,y1 = p5[i]
-    x2, y2 = p5[(i + 1) % len(p5)]
-    r.glLine(x1, y1, x2, y2)
-
-
-# Sirve
-for i in range(100):
-    for j in range(100):
-        r.floodfill(i-r.width, 800-r.height, BACKGROUND, BLACK)
-
-# Asumo que tengo un punto dentro del centro
-r.floodfill(710, 130, BACKGROUND, BLACK)
+r.load('./models/untitled.obj', [4, -6, 0], [100, 100, 100])
 
 # Termino
 r.glFinish()
