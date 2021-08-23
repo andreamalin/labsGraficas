@@ -30,7 +30,7 @@ def color (b, g, r):
 # Colores
 BLACK = color(0, 0, 0)
 WHITE = color(1, 1, 1)
-BLUE = color(0.9, 0.2, 0.1)
+BLUE = color(0.9, 0, 0.1)
 MAGENTA = color(0.9, 0.2, 0.1)
 BACKGROUND = color(0.7, 0.9, 1)
 
@@ -196,7 +196,7 @@ class Renderer(object):
     # Pintar
     def load(self, filename, translate, scale):
         model = Obj(filename)
-        self.light = norm(V3(0, 1, -1))
+        self.light = norm(V3(0, 2, -1))
         
         for face in model.faces:
             vcount = len(face)
@@ -247,14 +247,14 @@ class Renderer(object):
                     grey = round(200 * intensity)
                     z = A.z * w + B.z * v + C.z * u
 
-                    if (grey > 255):
-                        grey = 255
-                    elif (grey < 0):
-                        grey = 0
+                    if (grey < 0):
+                        paint = color(39, 15, 20)
+                    else:
+                        paint = color(grey, int(grey*0.5), grey*0)
                     
     
-                    if z > self.zbuffer[y][x]:
-                        self.glVertex(y, x, color(grey, int(grey*0.5), grey*0))
+                    if abs(z) > self.zbuffer[y][x]:
+                        self.glVertex(y, x, paint)
                         self.zbuffer[y][x] = z
 
 
@@ -272,7 +272,7 @@ r = glCreateWindow(600, 600)
 r.glClearColor(0.7, 0.9, 1)
 
 
-r.load('./models/untitled.obj', [3.5, -6, 0], [80, 80, 50000])
+r.load('./models/untitled.obj', [2.7, 0.5, 0], [110, 110, 50000])
 
 # Termino
 r.glFinish()
