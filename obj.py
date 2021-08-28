@@ -4,6 +4,7 @@ class Obj(object):
       self.lines = f.read().splitlines()
 
     self.vertices = []
+    self.tvertices = []
     self.faces = []
     self.read()
 
@@ -14,6 +15,10 @@ class Obj(object):
 
         if prefix == 'v':
           self.vertices.append(
+            list(map(float, value.split(' ')))
+          )
+        elif prefix == 'vt':
+          self.tvertices.append(
             list(map(float, value.split(' ')))
           )
         elif prefix == 'f':

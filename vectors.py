@@ -44,24 +44,23 @@ def norm(v0):
 # Bounding box
 def bbox(A, B, C):
     xs = [A.x, B.x, C.x]
-    xs.sort()
     ys = [A.y, B.y, C.y]
+    xs.sort()
     ys.sort()
-
     return xs[0], xs[-1], ys[0], ys[-1]
 
 # Barycentric
 def barycentric(A, B, C, P):
   cx, cy, cz = cross(
-    V3(B.x - A.x, C.x - A.x, A.x - P.x), 
-    V3(B.y - A.y, C.y - A.y, A.y - P.y)
+      V3(B.x - A.x, C.x - A.x, A.x - P.x),
+      V3(B.y - A.y, C.y - A.y, A.y - P.y)
   )
 
   if cz == 0:
-    return -1, -1, -1
+      return -1, -1, -1
 
   u = cx/cz
   v = cy/cz
-  w = 1 - (u + v) / cz
+  w = 1 - (u + v)
 
-  return w, v, u
+  return u, v, w
