@@ -31,9 +31,10 @@ def color (b, g, r):
 # Colores
 BLACK = color(0, 0, 0)
 WHITE = color(1, 1, 1)
-BLUE = color(0.9, 0, 0.1)
+BLUE = color(0.9, 0, 0.2)
 MAGENTA = color(0.9, 0.2, 0.1)
 BACKGROUND = color(0.7, 0.9, 1)
+AQUA = color(161, 91, 0)
 
 # RENDERER
 class Renderer(object):
@@ -48,7 +49,7 @@ class Renderer(object):
     # Limpia la imagen a color negro -> llena el framebuffer
     def glClear(self, color = None): 
         self.framebuffer = [
-            [color or BLACK for x in range(self.width)]
+            [color or AQUA for x in range(self.width)]
             for y in range(self.height)
         ]
         
@@ -94,7 +95,7 @@ class Renderer(object):
         
     # Crea el archivo
     def glFinish(self):
-        self.write('a.bmp')
+        self.write('planet.bmp')
         
     # Pintar un pixel -> recibe la posicion y color
     def glVertex(self, x, y, color = None):
@@ -193,7 +194,7 @@ class Renderer(object):
 
         for face in model.faces:
             vcount = len(face)
-            if vcount == 3:
+            if vcount == 3 or vcount == 4:
                 # Posiciones
                 f1 = face[0][0]
                 f2 = face[1][0]
@@ -204,61 +205,61 @@ class Renderer(object):
                 v2 = model.vertices[f2 - 1]
                 v3 = model.vertices[f3 - 1]
 
-                x1 = ((v1[0] * scale[0]) + translate[0]) 
-                y1 = ((v1[1] * scale[1]) + translate[1]) 
-                z1 = ((v1[2] * scale[2]) + translate[2]) 
-                
-                
-                x2 = ((v2[0] * scale[0]) + translate[0]) 
-                y2 = ((v2[1] * scale[1]) + translate[1]) 
-                z2 = ((v2[2] * scale[2]) + translate[2]) 
-                
+                # Puntos
+                x1, y1, z1 = self.calcPoint(v1, scale, translate)
+                x2, y2, z2 = self.calcPoint(v2, scale, translate)
+                x3, y3, z3 = self.calcPoint(v3, scale, translate)
 
-                x3 = ((v3[0] * scale[0]) + translate[0]) 
-                y3 = ((v3[1] * scale[1]) + translate[1]) 
-                z3 = ((v3[2] * scale[2]) + translate[2])
+                # Triangulo
+                self.triangle(
+                    self.calcViewPort(x1, y1, z1, mitadX, mitadY),
+                    self.calcViewPort(x2, y2, z2, mitadX, mitadY), 
+                    self.calcViewPort(x3, y3, z3, mitadX, mitadY)
+                )
+            
+            # Cuadrado
+            if vcount == 4:
+                 # Posicion faltante
+                f4 = face[3][0]
 
-                xp1 = round(mitadX + (x1 * mitadX))
-                yp1 = round(mitadY + (y1 * mitadY))
+                # Cara faltante
+                v4 = model.vertices[f4 - 1]
 
-                if (self.width <= xp1):
-                    xp1 = self.width - 1
-                elif (xp1 < 0):
-                    xp1 = 0
-                if (self.height <= yp1):
-                    yp1 = self.height - 1
-                elif (yp1 < 0):
-                    yp1 = 0
+                # Punto faltante
+                x4, y4, z4 = self.calcPoint(v4, scale, translate)
 
+                # Triangulo faltante
+                self.triangle(
+                    self.calcViewPort(x1, y1, z1, mitadX, mitadY),
+                    self.calcViewPort(x3, y3, z3, mitadX, mitadY), 
+                    self.calcViewPort(x4, y4, z4, mitadX, mitadY)
+                )               
+    
+    # Convierto en punto normal la coordenada para que quede dentro de la ventana
+    def calcViewPort(self, x, y, z, mitadX, mitadY): 
+        resX = round(mitadX + (x * mitadX))
+        resY = round(mitadY + (y * mitadY))
 
-                xp2 = round(mitadX + (x2 * mitadX))
-                yp2 = round(mitadY + (y2 * mitadY))
-                
+        if (self.width <= resX):
+            resX = self.width - 1
+        elif (resX < 0):
+            resX = 0
+        if (self.height <= resY):
+            resY = self.height - 1
+        elif (resY < 0):
+            resY = 0
 
-                if (self.width <= xp2):
-                    xp2 = self.width - 1
-                elif (xp2 < 0):
-                    xp2 = 0
-                if (self.height <= yp2):
-                    yp2 = self.height - 1
-                elif (yp2 < 0):
-                    yp2 = 0
+        return V3(resX, resY, z)
 
+    # Obtengo el punto
+    def calcPoint(self, point, scale, translate):
+        x = (point[0] * scale[0]) + translate[0]
+        y = (point[1] * scale[1]) + translate[1]
+        z = (point[2] * scale[2]) + translate[2]
+    
+        return [x, y, z]
 
-
-                xp3 = round(mitadX + (x3 * mitadX))
-                yp3 = round(mitadY + (y3 * mitadY))
-
-                if (self.width <= xp3):
-                    xp3 = self.width - 1
-                elif (xp3 < 0):
-                    xp3 = 0
-                if (self.height <= yp3):
-                    yp3 = self.height - 1
-                elif (yp3 < 0):
-                    yp3 = 0
-                self.triangle(V3(xp1, yp1, z1), V3(xp2, yp2, z2), V3(xp3, yp3, z3))
-                
+    # Triangulo
     def triangle(self, A, B, C):
         xmin, xmax, ymin, ymax = bbox(A, B, C)
         contador = 0
@@ -275,17 +276,19 @@ class Renderer(object):
                     intensity = dot(normal, self.light)
                     grey = round(200 * intensity)
                     z = A.z * w + B.z * v + C.z * u
+                
                     if (grey < 0):
-                        paint = color(39, 15, 20)
+                        continue
+                    elif (grey > 255):
+                        paint = color(255, 255, 255)
                     else:
                         paint = color(grey, int(grey*0.5), grey*0)
+                        # paint = color(grey, int(grey*0.3), grey*0)
     
-                    if abs(z) > self.zbuffer[y][x]:
+                    if abs(z) > self.zbuffer[x][y]:
                         self.glVertex(y, x, paint)
-                        self.zbuffer[y][x] = z
-                    else:
-                        # print('entra ', y, x)
-                        contador+=1
+                        self.zbuffer[x][y] = z
+
 
 
 # Inicializo el framebuffer
@@ -299,8 +302,7 @@ def glInit():
 #r = glInit()
 r = glCreateWindow(600, 600)
 
-# r.load('./models/untitled.obj', [2.7, 0.5, 0], [110, 110, 50000])
-r.load('./models/sphere.obj', [0, 0, 0], [1, 1, 50000])
+r.load('./models/sphere.obj', [0, 0, 0], [1, 1, 500])
 
 # Termino
 r.glFinish()

@@ -18,7 +18,7 @@ def mul(v0, k):
 
 # Producto punto
 def dot(v0, v1):
-  return v0.x * v1.x + v0.y * v1.y + v0.z * v1.z
+  return v0.x * v1.x + v0.z * v1.z + v0.z * v1.z
 
 # Producto cruz
 def cross(v0, v1):
