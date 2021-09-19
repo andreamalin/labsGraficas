@@ -18,7 +18,7 @@ def mul(v0, k):
 
 # Producto punto
 def dot(v0, v1):
-  return v0.x * v1.x + v0.z * v1.z + v0.z * v1.z
+  return v0.x * v1.x + v0.y * v1.y + v0.z * v1.z
 
 # Producto cruz
 def cross(v0, v1):
@@ -47,7 +47,7 @@ def bbox(A, B, C):
     ys = [A.y, B.y, C.y]
     xs.sort()
     ys.sort()
-    return xs[0], xs[-1], ys[0], ys[-1]
+    return round(xs[0]), round(xs[-1]), round(ys[0]), round(ys[-1])
 
 # Barycentric
 def barycentric(A, B, C, P):
