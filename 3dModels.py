@@ -101,7 +101,7 @@ class Renderer(object):
         
     # Crea el archivo
     def glFinish(self):
-        self.write('face.bmp')
+        self.write('dolphin.bmp')
         
     # Pintar un pixel -> recibe la posicion y color
     def glVertex(self, x, y, color = None):
@@ -356,9 +356,9 @@ def glInit():
 #r = glInit()
 r = glCreateWindow(600, 600)
 # Camara
-r.lookAt(V3(3, 0, 5), V3(0, 0, 0), V3(0, 1, 0))
+r.lookAt(V3(1.5, 0, 5), V3(0.3, 0, 0), V3(0, 1, 0))
 # Modelo
-r.load('./models/model.obj', [0, 0, 0], [1/2, 1/2, 1], [0, 0, 0])
+r.load('./models/untitled.obj', [0.6, 0, 0.3], [1/8, 1/8, 1/4], [0, 0, 0])
 # r.load('./models/sphere.obj', [0, 0, 0], [1, 1, 500])
 
 # Termino
