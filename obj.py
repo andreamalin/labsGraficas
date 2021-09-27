@@ -23,5 +23,5 @@ class Obj(object):
           )
         elif prefix == 'f':
           self.faces.append(
-            [list(map(int, face.split('/'))) for face in value.split(' ')]
+            [list(map(int, face.split('/'))) for face in value.split(' ')[0:3]]
           )

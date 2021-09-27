@@ -196,7 +196,7 @@ class Renderer(object):
         self.loadModelMatrix(translate, scale, rotation)
     
         model = Obj(filename)
-        self.light = norm(V3(0, 0, 1))
+        self.light = norm(V3(1, 0, 1))
         mitadX = round(self.width/2)
         mitadY = round(self.height/2)
 
@@ -356,10 +356,19 @@ def glInit():
 #r = glInit()
 r = glCreateWindow(600, 600)
 # Camara
-r.lookAt(V3(1.5, 0, 5), V3(0.3, 0, 0), V3(0, 1, 0))
+r.lookAt(V3(0, 0, 5), V3(0, 0, 0), V3(0, 1, 0))
 # Modelo
-r.load('./models/untitled.obj', [0.6, 0, 0.3], [1/8, 1/8, 1/4], [0, 0, 0])
-# r.load('./models/sphere.obj', [0, 0, 0], [1, 1, 500])
+# DELFIN
+# r.load('./models/untitled.obj', [0.6, 0, 0.3], [1/8, 1/8, 1/4], [0, 0, 0])
+# SILLA DE PLAYA
+# r.load('./models/projectModels/chair.obj', [0, 0, 0.3], [1/100, 1/100, 1/50], [0, 0, 0])
+# PELOTA DE PLAYA
+# r.load('./models/projectModels/beachball.obj', [0.6, 0, 0.3], [1/400, 1/400, 1/200], [0, 0, 0])
+# PALMERA
+# r.lookAt(V3(1, 0, 5), V3(0, 0, 0), V3(0, 1, 0))
+r.load('./models/projectModels/coconutpalm.obj', [0, 0, 0], [1/270, 1/270, 1/200], [-pi/2, 0, 0])
+# CANGREJO
+# r.load('./models/projectModels/crab.obj', [-0.5, 0, 0.3], [1/150, 1/150, 1/75], [0, 0, 0])
 
 # Termino
 r.glFinish()
