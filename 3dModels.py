@@ -351,23 +351,24 @@ def glCreateWindow(width, height):
 
 # Inicializo el render
 def glInit():
-    return Renderer(600, 600)
+    return Renderer(1024, 768)
 
 #r = glInit()
-r = glCreateWindow(600, 600)
+r = glCreateWindow(1024, 768)
+
 # Camara
-r.lookAt(V3(1.5, 0, 5), V3(0.3, 0, 0), V3(0, 1, 0))
+r.lookAt(V3(0, 0, 5), V3(0.3, 0, 0), V3(0, 1, 0))
 # Modelo
 # # # DELFIN
-r.load('./models/untitled.obj', [0.6, 0, 0.3], [1/8, 1/8, 1/4], [0, 0, 0])
-# # # # # # PELOTA DE PLAYA
-# r.load('./models/projectModels/beachball.obj', [0.3, -0.2, 2], [1/800, 1/800, 1/800], [0, 0, 0])
-# # # # # # PALMERA
-# r.load('./models/projectModels/coconutpalm.obj', [-0.7, -0.2, -0.8], [1/150, 1/150, 1/130], [-pi/2, 0, 0])
-# # # # # # SILLA DE PLAYA
-# r.load('./models/projectModels/chair.obj', [-0.05, 0, 1.5], [1/200, 1/200, 1/120], [0, -pi/6, 0])
-# # # # # # CANGREJO
-# r.load('./models/projectModels/crab.obj', [-0.2, -0.4, 1.5], [1/350, 1/350, 1/200], [0, 0, 0])
+r.load('./models/untitled.obj', [-1.3, 0, -1.1], [1/8, 1/8, 1/8], [0, 0, 0])
+# # # # # PELOTA DE PLAYA
+r.load('./models/projectModels/beachball.obj', [0.2, -0.2, 2], [1/800, 1/800, 1/800], [0, 0, 0])
+# # # # # PALMERA
+r.load('./models/projectModels/coconutpalm.obj', [-0.7, -0.2, -0.8], [1/150, 1/150, 1/130], [-pi/2, 0, 0])
+# # # # # SILLA DE PLAYA
+r.load('./models/projectModels/chair.obj', [-0.05, 0, 1.5], [1/200, 1/200, 1/120], [0, -pi/6, 0])
+# # # # # CANGREJO
+r.load('./models/projectModels/crab.obj', [-0.2, -0.4, 1.5], [1/350, 1/350, 1/200], [0, 0, 0])
 
 # Termino
 r.glFinish()

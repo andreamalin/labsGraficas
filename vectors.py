@@ -63,4 +63,4 @@ def barycentric(A, B, C, P):
   v = cy/cz
   w = 1 - (u + v)
 
-  return w, v, u
+  return u, v, w
