@@ -196,9 +196,9 @@ class Renderer(object):
         self.loadModelMatrix(translate, scale, rotation)
     
         model = Obj(filename)
-        self.light = norm(V3(1, 0, 5))
-        mitadX = round(self.width/2)
-        mitadY = round(self.height/2)
+        self.light = norm(V3(0, 0, 1))
+        # mitadX = round(self.width/2)
+        # mitadY = round(self.height/2)
 
         self.Matrix = mulMatrix(self.Viewport, mulMatrix(self.Projection, mulMatrix(self.View, self.Model)))
 
@@ -253,7 +253,6 @@ class Renderer(object):
     # Triangulo
     def triangle(self, A, B, C):
         xmin, xmax, ymin, ymax = bbox(A, B, C)
-        contador = 0
 
         for x in range(xmin, xmax + 1):
             for y in range(ymin, ymax + 1):
@@ -276,10 +275,11 @@ class Renderer(object):
                         paint = color(grey, int(grey*0.5), grey*0)
                         # paint = color(grey, int(grey*0.3), grey*0)
 
-                    try:
+                    try:                        
                         if z > self.zbuffer[x][y]:
                             self.glVertex(y, x, paint)
                             self.zbuffer[x][y] = z
+                        
                     except:
                         pass
 
@@ -351,23 +351,23 @@ def glCreateWindow(width, height):
 
 # Inicializo el render
 def glInit():
-    return Renderer(1024, 768)
+    return Renderer(600, 600)
 
 #r = glInit()
-r = glCreateWindow(1024, 768)
+r = glCreateWindow(600, 600)
 # Camara
-r.lookAt(V3(0, 0, 5), V3(0.3, 0, 0), V3(0, 1, 0))
+r.lookAt(V3(1.5, 0, 5), V3(0.3, 0, 0), V3(0, 1, 0))
 # Modelo
 # # # DELFIN
-r.load('./models/untitled.obj', [-1.3, 0, -1.4], [1/12, 1/12, 1/8], [0, 0, 0])
-# # # # PELOTA DE PLAYA
-r.load('./models/projectModels/beachball.obj', [0.3, -0.2, 1.5], [1/800, 1/800, 1/300], [0, 0, 0])
-# # # # PALMERA
-r.load('./models/projectModels/coconutpalm.obj', [-0.7, -0.2, -0.8], [1/150, 1/150, 1/130], [-pi/2, 0, 0])
-# # # # SILLA DE PLAYA
-r.load('./models/projectModels/chair.obj', [-0.05, 0, 1.5], [1/200, 1/200, 1/120], [0, -pi/6, 0])
-# # # # CANGREJO
-r.load('./models/projectModels/crab.obj', [-0.2, -0.4, 1.5], [1/350, 1/350, 1/200], [0, 0, 0])
+r.load('./models/untitled.obj', [0.6, 0, 0.3], [1/8, 1/8, 1/4], [0, 0, 0])
+# # # # # # PELOTA DE PLAYA
+# r.load('./models/projectModels/beachball.obj', [0.3, -0.2, 2], [1/800, 1/800, 1/800], [0, 0, 0])
+# # # # # # PALMERA
+# r.load('./models/projectModels/coconutpalm.obj', [-0.7, -0.2, -0.8], [1/150, 1/150, 1/130], [-pi/2, 0, 0])
+# # # # # # SILLA DE PLAYA
+# r.load('./models/projectModels/chair.obj', [-0.05, 0, 1.5], [1/200, 1/200, 1/120], [0, -pi/6, 0])
+# # # # # # CANGREJO
+# r.load('./models/projectModels/crab.obj', [-0.2, -0.4, 1.5], [1/350, 1/350, 1/200], [0, 0, 0])
 
 # Termino
 r.glFinish()
