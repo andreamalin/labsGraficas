@@ -52,8 +52,8 @@ def bbox(A, B, C):
 # Barycentric
 def barycentric(A, B, C, P):
   cx, cy, cz = cross(
-      V3(B.x - A.x, C.x - A.x, A.x - P.x),
-      V3(B.y - A.y, C.y - A.y, A.y - P.y)
+      V3(C.x - A.x, B.x - A.x, A.x - P.x),
+      V3(C.y - A.y, B.y - A.y, A.y - P.y)
   )
 
   if cz == 0:
@@ -63,4 +63,4 @@ def barycentric(A, B, C, P):
   v = cy/cz
   w = 1 - (u + v)
 
-  return u, v, w
+  return w, v, u

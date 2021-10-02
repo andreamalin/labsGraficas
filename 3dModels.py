@@ -5,7 +5,7 @@ Andrea Amaya 19357
 import struct
 from math import sin, cos
 from vectors import *
-from textures import *
+from textures import Texture
 from transformations import *
 from obj import Obj
 
@@ -41,6 +41,13 @@ BLUE = color(0.9, 0, 0.2)
 MAGENTA = color(0.9, 0.2, 0.1)
 BACKGROUND = color(0.7, 0.9, 1)
 AQUA = color(161, 91, 0)
+
+
+# texture = Texture('./models/water.bmp')
+texture = Texture('./models/dennis/model.bmp')
+textureNormal = Texture('./models/dennis/normal.bmp')
+texture.read()
+textureNormal.read()
 
 # RENDERER
 class Renderer(object):
@@ -101,7 +108,7 @@ class Renderer(object):
         
     # Crea el archivo
     def glFinish(self):
-        self.write('dolphin.bmp')
+        self.write('project.bmp')
         
     # Pintar un pixel -> recibe la posicion y color
     def glVertex(self, x, y, color = None):
@@ -201,6 +208,8 @@ class Renderer(object):
         # mitadY = round(self.height/2)
 
         self.Matrix = mulMatrix(self.Viewport, mulMatrix(self.Projection, mulMatrix(self.View, self.Model)))
+        texturas = model.tvertices
+        normales = model.tnormales
 
         for face in model.faces:
             vcount = len(face)
@@ -214,9 +223,44 @@ class Renderer(object):
                 v1 = V3(*model.vertices[f1 - 1])
                 v2 = V3(*model.vertices[f2 - 1])
                 v3 = V3(*model.vertices[f3 - 1])
+                
+                # Posiciones texturas
+                pA = face[0][1] - 1
+                pB = face[1][1] - 1
+                pC = face[2][1] - 1
 
-                self.triangle(self.transform(v1), self.transform(v2), self.transform(v3))
-            
+                # Texturas
+                tA = V3(*texturas[pA])
+                tB = V3(*texturas[pB])
+                tC = V3(*texturas[pC])
+
+
+                # Posiciones normales
+                pnA = face[0][2] - 1
+                pnB = face[1][2] - 1
+                pnC = face[2][2] - 1
+
+                # Normales
+                tnA = V3(*normales[pnA])
+                tnB = V3(*normales[pnB])
+                tnC = V3(*normales[pnC])
+
+
+
+                if ("crab" in filename):
+                    self.crab(self.transform(v1), self.transform(v2), self.transform(v3))
+                    
+                elif ("untitled" in filename):
+                    self.dolphin(self.transform(v1), self.transform(v2), self.transform(v3), tA, tB, tC, tnA, tnB, tnC)
+
+                elif ("chair" in filename):
+                    self.chair(self.transform(v1), self.transform(v2), self.transform(v3))
+                
+                elif ("beachball" in filename):
+                    self.beachball(self.transform(v1), self.transform(v2), self.transform(v3))
+                else:
+                    self.dolphin(self.transform(v1), self.transform(v2), self.transform(v3), tA, tB, tC, tnA, tnB, tnC)    
+                
             # Cuadrado
             if vcount == 4:
                  # Posicion faltante
@@ -224,7 +268,33 @@ class Renderer(object):
 
                 # Cara faltante
                 v4 =  V3(*model.vertices[f4 - 1])
-                self.triangle(self.transform(v1), self.transform(v3), self.transform(v4))            
+
+                # Posiciones texturas
+                pD = face[3][1] - 1
+
+                # Texturas
+                tD = V3(*texturas[pD])
+
+                # Posicion faltante normal
+                pnD = face[3][2] - 1
+
+                # Normales]\
+                tnD = V3(*normales[pnD])
+
+                if ("crab" in filename):
+                    self.crab(self.transform(v1), self.transform(v3), self.transform(v4))
+                    
+                elif ("untitled" in filename):
+                    self.dolphin(self.transform(v1), self.transform(v3), self.transform(v4), tA, tC, tD, tnA, tnC, tnD)
+
+                elif ("chair" in filename):
+                    self.chair(self.transform(v1), self.transform(v3), self.transform(v4))
+
+                elif ("beachball" in filename):
+                    self.beachball(self.transform(v1), self.transform(v3), self.transform(v4))
+
+                else:
+                    self.dolphin(self.transform(v1), self.transform(v3), self.transform(v4), tA, tC, tD, tnA, tnC, tnD)    
     
     # Convierto en punto normal la coordenada para que quede dentro de la ventana
     def calcViewPort(self, x, y, z, mitadX, mitadY): 
@@ -250,8 +320,41 @@ class Renderer(object):
     
         return [x, y, z]
 
-    # Triangulo
-    def triangle(self, A, B, C):
+    # # Triangulo
+    # def triangle(self, A, B, C):
+    #     xmin, xmax, ymin, ymax = bbox(A, B, C)
+
+    #     for x in range(xmin, xmax + 1):
+    #         for y in range(ymin, ymax + 1):
+    #                 P = V3(x, y, 0)
+    #                 w, v, u = barycentric(A, B, C, P)
+
+    #                 if (w < 0 or v < 0 or u < 0):
+    #                     continue
+
+    #                 normal = norm(cross(sub(B, A), sub(C, A)))
+    #                 intensity = dot(normal, self.light)
+    #                 grey = round(100 * intensity)
+    #                 z = A.z * w + B.z * v + C.z * u
+                
+    #                 if (grey < 0):
+    #                     continue
+    #                 elif (grey > 255):
+    #                     paint = color(255, 255, 255)
+    #                 else:
+    #                     paint = color(grey*0, grey*0, grey*0.8)
+    #                     # paint = color(grey, int(grey*0.3), grey*0)
+
+    #                 try:                        
+    #                     if z > self.zbuffer[x][y]:
+    #                         self.glVertex(y, x, paint)
+    #                         self.zbuffer[x][y] = z
+                        
+    #                 except:
+    #                     pass
+
+    ##################### CRAB ####################
+    def crab(self, A, B, C):
         xmin, xmax, ymin, ymax = bbox(A, B, C)
 
         for x in range(xmin, xmax + 1):
@@ -272,7 +375,7 @@ class Renderer(object):
                     elif (grey > 255):
                         paint = color(255, 255, 255)
                     else:
-                        paint = color(grey, int(grey*0.5), grey*0)
+                        paint = color(grey*0, grey*0, grey*0.8)
                         # paint = color(grey, int(grey*0.3), grey*0)
 
                     try:                        
@@ -282,6 +385,131 @@ class Renderer(object):
                         
                     except:
                         pass
+ 
+
+    ##################### DOLPHIN ####################
+    def dolphin(self, A, B, C, tA, tB, tC, tnA, tnB, tnC):
+        xmin, xmax, ymin, ymax = bbox(A, B, C)
+
+        for x in range(xmin, xmax + 1):
+            for y in range(ymin, ymax + 1):
+                P = V3(x, y, 0)
+                w, v, u = barycentric(A, B, C, P)
+
+                if (w < 0 or v < 0 or u < 0):
+                    continue
+
+                # Coordinadas texturas
+                tx = (tA.x * w + tB.x * v + tC.x * u)
+                ty = (tA.y * w + tB.y * v + tC.y * u)
+                
+                # Color de las texturas
+                tColor = texture.getColor(tx, ty)
+
+                # Intensidades
+                ia, ib, ic = [dot(n, self.light) for n in (tnA, tnB, tnC)]
+
+                intensity = ia * w + ib * v + ic * u
+                z = A.z * w + B.z * v + C.z * u
+
+                # Colores
+                b, g, r = [int(t * intensity) if intensity > 0 else 0 for t in tColor]
+
+                paint = color(b, g, r)
+                # paint = self.shaderNormalMap(tx, ty)
+
+                try:      
+                    if z > self.zbuffer[y][x]:
+                        self.glVertex(y, x, paint)
+
+                        self.zbuffer[y][x] = z
+                    
+                except:
+                    pass
+ 
+
+    ##################### CHAIR ####################
+    def chair(self, A, B, C):
+        xmin, xmax, ymin, ymax = bbox(A, B, C)
+
+        for x in range(xmin, xmax + 1):
+            for y in range(ymin, ymax + 1):
+                    P = V3(x, y, 0)
+                    w, v, u = barycentric(A, B, C, P)
+
+                    if (w < 0 or v < 0 or u < 0):
+                        continue
+
+                    normal = norm(cross(sub(B, A), sub(C, A)))
+                    intensity = dot(normal, self.light)
+                    grey = round(100 * intensity)
+                    z = A.z * w + B.z * v + C.z * u
+                
+                    if (grey < 0):
+                        continue
+                    elif (grey > 255):
+                        paint = color(255, 255, 255)
+                    else:
+                        paint = color(grey*0, grey*0.5, grey*0.6)
+
+                    try:      
+                        if z > self.zbuffer[x][y]:
+                            self.glVertex(y, x, paint)
+
+                            self.zbuffer[x][y] = z
+                        
+                    except:
+                        pass
+ 
+
+    ##################### BEACHBALL ####################
+    def beachball(self, A, B, C):
+        paintRed = 0
+        xmin, xmax, ymin, ymax = bbox(A, B, C)
+
+
+        # Circulos
+        def circle(x, y, r, out):
+            if (out):
+                return ((300-x)**2 + (300-y)**2) > r
+            else:
+                return ((300-x)**2 + (300-y)**2) < r
+
+
+        for x in range(xmin, xmax + 1):
+            for y in range(ymin, ymax + 1):
+                    P = V3(x, y, 0)
+                    w, v, u = barycentric(A, B, C, P)
+
+
+                    if (w < 0 or v < 0 or u < 0):
+                        continue
+
+                    normal = norm(cross(sub(B, A), sub(C, A)))
+                    intensity = dot(normal, self.light)
+                    grey = round(100 * intensity)
+                    z = A.z * w + B.z * v + C.z * u
+                
+
+
+                                
+                    if (grey < 0):
+                        continue
+                    else:
+                        if (paintRed % 4 == 4):
+                            paint = color(grey*0, grey*1, grey*0)
+                            paintRed = 0
+                        else:
+                            paint = color(grey*0, grey*0, grey*1)
+                            paintRed += 1
+
+                    try:      
+                        self.glVertex(y, x, paint)
+                        self.zbuffer[x][y] = z
+                        
+                    except:
+                        pass
+ 
 
     # Transform
     def transform(self, vertex):
@@ -343,6 +571,16 @@ class Renderer(object):
             [0, 0, 1, 0],
             [0, 0, coeff, 1]]
 
+    def shaderNormalMap(self, tx, ty):
+        tColor = texture.getColor(tx, ty)
+        colorNormal = textureNormal.getColor(tx, ty)
+
+        z, y, x = [c/255 for c in colorNormal]
+        vectorNormal = V3(x, y, z)
+        intensity = int(dot(vectorNormal, self.light))
+
+        b, g, r = [int(t * intensity) if intensity > 0 else 0 for t in tColor]
+        return color(b, g, r)
 
 
 # Inicializo el framebuffer
@@ -353,22 +591,26 @@ def glCreateWindow(width, height):
 def glInit():
     return Renderer(1024, 768)
 
-#r = glInit()
+# r = glInit()
 r = glCreateWindow(1024, 768)
 
-# Camara
+# # Camara
 r.lookAt(V3(0, 0, 5), V3(0.3, 0, 0), V3(0, 1, 0))
-# Modelo
-# # # DELFIN
-r.load('./models/untitled.obj', [-1.3, 0, -1.1], [1/8, 1/8, 1/8], [0, 0, 0])
-# # # # # PELOTA DE PLAYA
-r.load('./models/projectModels/beachball.obj', [0.2, -0.2, 2], [1/800, 1/800, 1/800], [0, 0, 0])
-# # # # # PALMERA
-r.load('./models/projectModels/coconutpalm.obj', [-0.7, -0.2, -0.8], [1/150, 1/150, 1/130], [-pi/2, 0, 0])
-# # # # # SILLA DE PLAYA
-r.load('./models/projectModels/chair.obj', [-0.05, 0, 1.5], [1/200, 1/200, 1/120], [0, -pi/6, 0])
-# # # # # CANGREJO
-r.load('./models/projectModels/crab.obj', [-0.2, -0.4, 1.5], [1/350, 1/350, 1/200], [0, 0, 0])
+# # Modelo
+# # # # DELFIN
+# r.load('./models/untitled.obj', [-1.3, 0, -1.1], [1/8, 1/8, 1/8], [0, 0, 0])
+r.load('./models/dennis/model.obj', [0, 0, 0], [1, 1, 1], [0, 0, 0])
+# # # # # # # PELOTA DE PLAYA
+# r.load('./models/projectModels/beachball.obj', [0.2, -0.2, 2], [1/800, 1/800, 1/800], [0, 0, 0])
+# # # # # # # PALMERA
+# r.load('./models/projectModels/coconutpalm.obj', [-0.7, -0.2, -0.8], [1/150, 1/150, 1/130], [-pi/2, 0, 0])
+# # # # # # # SILLA DE PLAYA
+# r.load('./models/projectModels/chair.obj', [-0.05, 0, 1.5], [1/200, 1/200, 1/120], [0, -pi/6, 0])
+# # # # # # CANGREJO
+# r.load('./models/projectModels/crab.obj', [-0.2, -0.4, 1.5], [1/350, 1/350, 1/200], [0, 0, 0])
 
+# texture = Texture('./models/water.bmp')
+# pixels = texture.read()
+# r.framebuffer = pixels
 # Termino
 r.glFinish()

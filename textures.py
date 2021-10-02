@@ -12,8 +12,13 @@ def color (b, g, r):
 class Texture(object):
     def __init__(self, path):
         self.path = path
-        self.read()
     
+    def getColor(self, tx, ty):
+        x = int(tx * self.width)
+        y = int(ty * self.height)
+
+        return self.pixels[y][x]
+
     def read(self):
         image = open(self.path, 'rb')
 
@@ -26,9 +31,8 @@ class Texture(object):
         self.width = struct.unpack("=l", image.read(4))[0]
         self.height = struct.unpack("=l", image.read(4))[0]
         self.pixels = []
-        image.seek(header)
-
         print(self.width, self.height)
+        image.seek(header)
 
         for y in range(self.height):
             self.pixels.append([])
@@ -39,3 +43,4 @@ class Texture(object):
                 g = ord(image.read(1))
                 self.pixels[y].append(color(b, r, g))
         image.close()
+        return self.pixels
