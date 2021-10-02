@@ -399,24 +399,24 @@ class Renderer(object):
                 if (w < 0 or v < 0 or u < 0):
                     continue
 
-                # Coordinadas texturas
+                z = A.z * w + B.z * v + C.z * u
+                # # Coordinadas texturas
                 tx = (tA.x * w + tB.x * v + tC.x * u)
                 ty = (tA.y * w + tB.y * v + tC.y * u)
                 
-                # Color de las texturas
-                tColor = texture.getColor(tx, ty)
+                # # Color de las texturas
+                # tColor = texture.getColor(tx, ty)
 
-                # Intensidades
-                ia, ib, ic = [dot(n, self.light) for n in (tnA, tnB, tnC)]
+                # # Intensidades
+                # ia, ib, ic = [dot(n, self.light) for n in (tnA, tnB, tnC)]
 
-                intensity = ia * w + ib * v + ic * u
-                z = A.z * w + B.z * v + C.z * u
+                # intensity = ia * w + ib * v + ic * u
 
-                # Colores
-                b, g, r = [int(t * intensity) if intensity > 0 else 0 for t in tColor]
+                # # Colores
+                # b, g, r = [int(t * intensity) if intensity > 0 else 0 for t in tColor]
 
-                paint = color(b, g, r)
-                # paint = self.shaderNormalMap(tx, ty)
+                # paint = color(b, g, r)
+                paint = self.shaderNormalMap(tx, ty)
 
                 try:      
                     if z > self.zbuffer[y][x]:
@@ -577,7 +577,7 @@ class Renderer(object):
 
         z, y, x = [c/255 for c in colorNormal]
         vectorNormal = V3(x, y, z)
-        intensity = int(dot(vectorNormal, self.light))
+        intensity = dot(vectorNormal, self.light)
 
         b, g, r = [int(t * intensity) if intensity > 0 else 0 for t in tColor]
         return color(b, g, r)
