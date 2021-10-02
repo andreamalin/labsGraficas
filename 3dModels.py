@@ -53,8 +53,8 @@ dolphinTexture = Texture('./models/projectModels/dolphin/water.bmp')
 dolphinTexture.read()
 
 #########         BEACH BALL           ########
-beachBallTexture = Texture('./models/projectModels/beachBall/beachBall.bmp')
-beachBallTexture.read()
+# beachBallTexture = Texture('./models/projectModels/beachBall/beachBall.bmp')
+# beachBallTexture.read()
 
 #########         WATER           ########
 waterTexture = Texture('./models/projectModels/water/water2.bmp')
