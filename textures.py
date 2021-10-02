@@ -31,7 +31,6 @@ class Texture(object):
         self.width = struct.unpack("=l", image.read(4))[0]
         self.height = struct.unpack("=l", image.read(4))[0]
         self.pixels = []
-        print(self.width, self.height)
         image.seek(header)
 
         for y in range(self.height):
