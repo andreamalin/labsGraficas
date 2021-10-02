@@ -19,9 +19,11 @@ class Obj(object):
             list(map(float, value.split(' ')))
           )
         elif prefix == 'vt':
-          self.tvertices.append(
-            list(map(float, value.split(' ')))
-          )
+          textures = list(map(float, value.split(' ')))
+          if (len(textures) == 2):
+            textures.append(0)
+          
+          self.tvertices.append(textures)
         elif prefix == 'vn':
           self.tnormales.append(
             list(map(float, value.split(' ')))

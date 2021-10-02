@@ -14,8 +14,8 @@ class Texture(object):
         self.path = path
     
     def getColor(self, tx, ty):
-        x = int(tx * self.width)
-        y = int(ty * self.height)
+        x = int(tx * self.width) - 1
+        y = int(ty * self.height) - 1
 
         return self.pixels[y][x]
 
