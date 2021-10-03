@@ -3,7 +3,7 @@ PLANETA - GRAFICAS POR COMPUTADOR
 Andrea Amaya 19357
 '''
 import struct
-from vectors import *
+from vectors2 import *
 from obj import Obj
 import random
 import math
