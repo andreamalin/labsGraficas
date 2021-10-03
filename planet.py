@@ -190,8 +190,10 @@ class Renderer(object):
 
 
         # Circulos
-        def circle(x, y, r, out):
-            if (out):
+        def circle(x, y, r, out, line=None, r2=None):
+            if (line):
+                return ((300-x)**2 + (300-y)**2) > r and ((300-x)**2 + (300-y)**2) < r2
+            elif (out):
                 return ((300-x)**2 + (300-y)**2) > r
             else:
                 return ((300-x)**2 + (300-y)**2) < r
@@ -258,6 +260,77 @@ class Renderer(object):
                         if (circle(x, y, 47000, True)):
                             # Pinto brillo de afuera
                             paint = color(224, 173, 0)
+                            self.glVertex(y-1, x+1, paint)
+                            self.glVertex(y+1, x-1, paint)
+                            self.glVertex(y+1, x+1, paint)
+                            self.glVertex(y-1, x-1, paint)
+
+
+                        # if (circle(x, y, 24000, True, True, 24500)):
+                        #     # Pinto lineas
+                        #     paint = color(166, 133, 0)
+                        #     self.glVertex(y-1, x+1, paint)
+                        #     self.glVertex(y+1, x-1, paint)
+                        #     self.glVertex(y+1, x+1, paint)
+                        #     self.glVertex(y-1, x-1, paint)
+                            
+                        # if (circle(x, y, 26000, True, True, 26500)):
+                        #     # Pinto lineas
+                        #     paint = color(166, 133, 0)
+                        #     self.glVertex(y-1, x+1, paint)
+                        #     self.glVertex(y+1, x-1, paint)
+                        #     self.glVertex(y+1, x+1, paint)
+                        #     self.glVertex(y-1, x-1, paint)
+
+                            
+                        # if (circle(x, y, 28000, True, True, 28500)):
+                        #     # Pinto lineas
+                        #     paint = color(166, 133, 0)
+                        #     self.glVertex(y-1, x+1, paint)
+                        #     self.glVertex(y+1, x-1, paint)
+                        #     self.glVertex(y+1, x+1, paint)
+                        #     self.glVertex(y-1, x-1, paint)
+                            
+                        # if (circle(x, y, 30000, True, True, 30500)):
+                        #     # Pinto lineas
+                        #     paint = color(166, 133, 0)
+                        #     self.glVertex(y-1, x+1, paint)
+                        #     self.glVertex(y+1, x-1, paint)
+                        #     self.glVertex(y+1, x+1, paint)
+                        #     self.glVertex(y-1, x-1, paint)
+
+                        # if (circle(x, y, 34000, True, True, 35000)):
+                        #     # Pinto lineas
+                        #     paint = color(148, 104, 0)
+                        #     self.glVertex(y-1, x+1, paint)
+                        #     self.glVertex(y+1, x-1, paint)
+                        #     self.glVertex(y+1, x+1, paint)
+                        #     self.glVertex(y-1, x-1, paint)                        
+                            
+                        # if (circle(x, y, 38000, True, True, 39000)):
+                        #     # Pinto lineas
+                        #     paint = color(148, 104, 0)
+                        #     self.glVertex(y-1, x+1, paint)
+                        #     self.glVertex(y+1, x-1, paint)
+                        #     self.glVertex(y+1, x+1, paint)
+                        #     self.glVertex(y-1, x-1, paint)
+                        
+                        # if (circle(x, y, 44000, True, True, 45000)):
+                        #     # Pinto lineas
+                        #     paint = color(163, 98, 0)
+                        #     self.glVertex(y-1, x+1, paint)
+                        #     self.glVertex(y+1, x-1, paint)
+                        #     self.glVertex(y+1, x+1, paint)
+                        #     self.glVertex(y-1, x-1, paint)
+
+                        if (circle(x, y, 47000, True, True, 47500)):
+                            # Pinto brillo de afuera
+                            paint = color(247, 157, 0)
+                            self.glVertex(y, x, paint)
+                            self.glVertex(y+1, x, paint)
+                            self.glVertex(y-1, x, paint)
+                            self.glVertex(y, x+1, paint)
+                            self.glVertex(y, x-1, paint)
                             self.glVertex(y-1, x+1, paint)
                             self.glVertex(y+1, x-1, paint)
                             self.glVertex(y+1, x+1, paint)
@@ -330,17 +403,14 @@ class Renderer(object):
             # Si no es el fondo ni la orrilla
             if self.framebuffer[i][j] != BLACK:
                 b, g, r = self.framebuffer[i][j]
-                if not (b == 224 and g == 173 and r == 0):
-                    if b < 150:
-                        # Orilla
-                        actualShade = color(204, 132, 1)
-                    # elif b < 200:
-                    #     # Centro
-                    #     actualShade = color(255, 207, 122)
-                    else:
-                        # Centro
-                        actualShade = color(255, 255, 255)
-                    self.glVertex(i, j, actualShade)
+                if (b == 162 and g == 153 and r == 20):
+                    actualShade = color(255, 255, 255)
+                elif (b == 192 and g == 169 and r == 13):
+                    actualShade = color(87, 76, 9)
+                else:
+                    actualShade = color(148, 104, 0)
+                
+                self.glVertex(i, j, actualShade)
         except:
             return
     # Rombos
