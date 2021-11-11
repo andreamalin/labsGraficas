@@ -2,7 +2,9 @@ from lib import *
 from transformations import *
 from vectors import *
 from math import tan
+import random
 from sphere import *
+from planes import *
 
 MAX_RECURSION_DEPTH = 3
 pi = 3.14
@@ -160,11 +162,12 @@ class Raytracer(object):
 
         for y in range(self.height):
             for x in range(self.width):
-                i = (2 * ((x + 0.5) / self.width) - 1) * self.aspectRatio * angulo
-                j = 1 - 2 * ((y + 0.5) / self.height) * angulo
-                direction = norm(V3(i, j, -1))
-                color = self.cast_ray(V3(0, 0, 0), direction)
-                self.glVertex(x, y, color)
+                if random.randint(0, 1) > 0.2:
+                    i = (2 * ((x + 0.5) / self.width) - 1) * self.aspectRatio * angulo
+                    j = 1 - 2 * ((y + 0.5) / self.height) * angulo
+                    direction = norm(V3(i, j, -1))
+                    color = self.cast_ray(V3(0, 0, 0), direction)
+                    self.glVertex(x, y, color)
 
 
 r = Raytracer(1000, 1000)
@@ -176,10 +179,12 @@ mirror = Material(diffuse=color(255, 255, 255), albedo=[0, 10, 0.8, 0], spec=150
 glass = Material(diffuse=color(255, 255, 255), albedo=[0, 0.5, 0.1, 0.5], spec=150, refractive_index=1.5)
 
 r.scene = [
-  Sphere(V3(0, -1.5, -10), 1.5, ivory),
-  Sphere(V3(-2, 1, -12), 2, glass),
-  Sphere(V3(1, 1, -8), 1, rubber),
-  Sphere(V3(0, 5, -20), 5, mirror),
+#   Sphere(V3(0, -1.5, -10), 1.5, ivory),
+#   Sphere(V3(-2, 1, -12), 2, glass),
+#   Sphere(V3(1, 1, -8), 1, rubber),
+#   Sphere(V3(0, 5, -20), 5, mirror),
+  # Plane(V3(0, 2, -5), V3(0, 2, -7), V3(0, 0, 0), ivory),
+  Plane(V3(0, 0, 0), V3(2, 2, 2), ivory),
 ]
 
 r.render()
