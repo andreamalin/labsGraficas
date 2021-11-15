@@ -4,7 +4,7 @@ from vectors import *
 from math import tan
 import random
 from sphere import *
-from planes import *
+from cube import *
 
 MAX_RECURSION_DEPTH = 3
 pi = 3.14
@@ -162,7 +162,7 @@ class Raytracer(object):
 
         for y in range(self.height):
             for x in range(self.width):
-                if random.randint(0, 1) > 0.2:
+                # if random.randint(0, 1) > 0.7:
                     i = (2 * ((x + 0.5) / self.width) - 1) * self.aspectRatio * angulo
                     j = 1 - 2 * ((y + 0.5) / self.height) * angulo
                     direction = norm(V3(i, j, -1))
@@ -184,7 +184,7 @@ r.scene = [
 #   Sphere(V3(1, 1, -8), 1, rubber),
 #   Sphere(V3(0, 5, -20), 5, mirror),
   # Plane(V3(0, 2, -5), V3(0, 2, -7), V3(0, 0, 0), ivory),
-  Plane(V3(0, 0, 0), V3(2, 2, 2), ivory),
+    Cube(position=V3(-2, 5, -15), size=V3(2, 3, 7), material=ivory)
 ]
 
 r.render()
