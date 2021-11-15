@@ -5,6 +5,7 @@ from math import tan
 import random
 from sphere import *
 from cube import *
+from textures import *
 
 MAX_RECURSION_DEPTH = 3
 pi = 3.14
@@ -21,6 +22,8 @@ class Raytracer(object):
         self.aspectRatio = self.width/self.height # Para que las imagenes no tengan que ser cuadradas
         self.background_color = MAGENTA
         self.light = None
+        # self.texture = Texture('./textures/water2.bmp')
+        # self.texture.read()
         self.glClear()
 
     # Limpia la imagen a color negro -> llena el framebuffer
@@ -42,6 +45,10 @@ class Raytracer(object):
         material, intersect = self.scene_intersect(origin, direction)
 
         if ((material is None or intersect is None) or recursion >= MAX_RECURSION_DEPTH):
+            # if (self.texture):
+            #     return self.texture.getColor(direction)
+            # else:
+            #     return self.background_color
             return self.background_color
 
 
@@ -130,6 +137,7 @@ class Raytracer(object):
             listOfColor[1] * material.albedo[2],
             listOfColor[2] * material.albedo[2]]
 
+
         # Calculo del color resultante
         result = color(
             diffuse[0] + specular[0] + reflection[0] + refraction[0],
@@ -170,21 +178,36 @@ class Raytracer(object):
                     self.glVertex(x, y, color)
 
 
-r = Raytracer(1000, 1000)
-r.light = Light(position=V3(10, 10, 20), intensity=1, color=color(255, 255, 255))
+r = Raytracer(200, 200)
+r.light = Light(position=V3(0, 5, 20), intensity=1, color=color(255, 255, 255))
 
 ivory = Material(diffuse=color(100, 100, 80), albedo=[0.6, 0.3, 0.1, 0], spec=50)
-rubber = Material(diffuse=color(80, 0, 0), albedo=[0.9, 0.1, 0, 0], spec=10)
+rubber = Material(diffuse=color(0, 56, 78), albedo=[0.9, 0.1, 0, 0], spec=10)
+rubber2 = Material(diffuse=color(255, 255, 255), albedo=[0.9, 0.1, 0, 0], spec=10)
+rubber3 = Material(diffuse=color(0, 0, 0), albedo=[0.9, 0.1, 0, 0], spec=10)
 mirror = Material(diffuse=color(255, 255, 255), albedo=[0, 10, 0.8, 0], spec=1500)
 glass = Material(diffuse=color(255, 255, 255), albedo=[0, 0.5, 0.1, 0.5], spec=150, refractive_index=1.5)
 
 r.scene = [
-#   Sphere(V3(0, -1.5, -10), 1.5, ivory),
-#   Sphere(V3(-2, 1, -12), 2, glass),
-#   Sphere(V3(1, 1, -8), 1, rubber),
-#   Sphere(V3(0, 5, -20), 5, mirror),
-  # Plane(V3(0, 2, -5), V3(0, 2, -7), V3(0, 0, 0), ivory),
-    Cube(position=V3(-2, 5, -15), size=V3(2, 3, 7), material=ivory)
+    # # Patas
+    Cube(position=V3(-2, 5, -8), size=V3(2, 1, 1), material=rubber),
+    Cube(position=V3(-2, 3, -8), size=V3(2, 1, 1), material=rubber),
+    Cube(position=V3(-2, 5, -15), size=V3(2, 1, 1), material=rubber),
+    Cube(position=V3(-2, 3, -15), size=V3(2, 1, 1), material=rubber),
+    # Cuerpo
+    Cube(position=V3(-0.5, 4, -10), size=V3(1.8, 3.5, 6), material=rubber),
+    # Cara
+    Cube(position=V3(1, 4, -8), size=V3(2.5, 3.5, 3), material=rubber),
+    # Orejas
+    Cube(position=V3(2.7, 5.8, -7), size=V3(1, 1, 1), material=rubber),
+    Cube(position=V3(2.6, 2.1, -6.9), size=V3(1, 1, 1), material=rubber),
+    # # Nariz
+    Cube(position=V3(0.25, 3.8, -6.5), size=V3(1, 1.5, 1), material=rubber2),
+    Cube(position=V3(0.5, 3.8, -6), size=V3(0.5, 0.5, 0.01), material=rubber3),
+    Cube(position=V3(-0.15, 3.8, -6), size=V3(0.2, 1.5, 0.01), material=rubber3),
+    # # Ojos
+    Cube(position=V3(1.1, 5, -6.5), size=V3(0.5, 0.5, 0.01), material=rubber3),
+    Cube(position=V3(1.1, 3, -6.5), size=V3(0.5, 0.5, 0.01), material=rubber3),
 ]
 
 r.render()
