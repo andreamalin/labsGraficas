@@ -30,7 +30,7 @@ class Texture(object):
 
       realColor = color(0, 0, 0)
       try:
-          realColor = color(self.colors[index], self.colors[index + 1], self.colors[index + 2])
+          realColor = self.colors[index]
       except:
           realColor = color(0, 0, 0)
 
