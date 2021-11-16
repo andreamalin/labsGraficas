@@ -182,7 +182,7 @@ class Raytracer(object):
 
 
 r = Raytracer(400, 400)
-r.light = Light(position=V3(-5, 3, 20), intensity=1, color=color(255, 255, 255))
+r.light = Light(position=V3(-4.5, -25, 20), intensity=1, color=color(255, 255, 255))
 
 ivory = Material(diffuse=color(100, 100, 80), albedo=[0.6, 0.3, 0.1, 0], spec=50)
 rubber = Material(diffuse=color(0, 56, 78), albedo=[0.9, 0.1, 0, 0], spec=10)
@@ -194,27 +194,65 @@ mirror = Material(diffuse=color(255, 255, 255), albedo=[0, 10, 0.8, 0], spec=150
 glass = Material(diffuse=color(255, 255, 255), albedo=[0, 0.5, 0.1, 0.5], spec=150, refractive_index=1.5)
 
 r.scene = [
-    ### PANDA ###
+    ## PANDA ###
     # Patas
-    Cube(position=V3(0, 2, -4), size=V3(0.7, 1, 0.7), material=rubber3),
-    Cube(position=V3(-2, 2, -4), size=V3(0.7, 1, 0.7), material=rubber3),
-    Cube(position=V3(0, 2, -8), size=V3(0.7, 1, 0.7), material=rubber3),
-    Cube(position=V3(-2, 2, -8), size=V3(0.7, 1, 0.7), material=rubber3),
+    Cube(position=V3(-0.5, 2, -4), size=V3(0.7, 1, 0.7), material=rubber3),
+    Cube(position=V3(-2.5, 2, -4), size=V3(0.7, 1, 0.7), material=rubber3),
     # Cuerpos
-    Cube(position=V3(-0.95, 1, -5.5), size=V3(2.6, 1.5, 4), material=rubber4),
+    Cube(position=V3(-1.45, 1, -5.5), size=V3(2.6, 1.5, 4), material=rubber4),
     # Cara
-    Cube(position=V3(-0.85, 1, -4), size=V3(2, 1, 2.5), material=rubber4),
+    Cube(position=V3(-1.20, 1, -4), size=V3(2, 1, 2.5), material=rubber4),
     # # Orejas
-    Cube(position=V3(-0.5, 0.14, -0.8), size=V3(0.1, 0.1, 0.05), material=rubber3),
-    Cube(position=V3(0, 0.14, -0.8), size=V3(0.1, 0.1, 0.05), material=rubber3),
+    Cube(position=V3(-0.65, 0.14, -0.8), size=V3(0.1, 0.1, 0.05), material=rubber3),
+    Cube(position=V3(-0.05, 0.14, -0.8), size=V3(0.1, 0.1, 0.05), material=rubber3),
     # # Nariz
-    Cube(position=V3(-0.85, 1.2, -3), size=V3(0.8, 0.4, 1), material=rubber5),
-    Cube(position=V3(-0.85, 1.11, -2.5), size=V3(0.4, 0.2, 0.1), material=rubber3),
+    Cube(position=V3(-1.1, 1.2, -3), size=V3(0.8, 0.4, 1), material=rubber5),
+    Cube(position=V3(-1.1, 1.11, -2.5), size=V3(0.4, 0.2, 0.1), material=rubber3),
+    # # # # Ojos
+    Cube(position=V3(-1.60, 0.9, -2.6), size=V3(0.6, 0.6, 0.05), material=rubber3),
+    Cube(position=V3(-1.5, 0.9, -2.4), size=V3(0.1, 0.1, 0.05), material=rubber2),
+    Cube(position=V3(-0.55, 0.9, -2.6), size=V3(0.6, 0.6, 0.05), material=rubber3),
+    Cube(position=V3(-0.6, 0.9, -2.4), size=V3(0.1, 0.1, 0.05), material=rubber2),
+
+    
+    # ### POLAR ###
+    # Patas
+    Cube(position=V3(2.3, 2, -4), size=V3(0.7, 1, 0.7), material=rubber2),
+    Cube(position=V3(0.3, 2, -4), size=V3(0.7, 1, 0.7), material=rubber2),
+    # Cuerpos
+    Cube(position=V3(1.2, 1, -5.5), size=V3(2.6, 1.5, 4), material=rubber2),
+    # # Cara
+    Cube(position=V3(1, 1, -4), size=V3(2, 1, 2.5), material=rubber2),
+    # Orejas
+    Cube(position=V3(0, 0.14, -0.8), size=V3(0.1, 0.1, 0.05), material=rubber5),
+    Cube(position=V3(0.6, 0.14, -0.8), size=V3(0.1, 0.1, 0.05), material=rubber5),
+    # Nariz
+    Cube(position=V3(0.85, 1.2, -3), size=V3(0.8, 0.4, 1), material=rubber5),
+    Cube(position=V3(0.85, 1.11, -2.5), size=V3(0.4, 0.2, 0.1), material=rubber3),
     # # # Ojos
-    Cube(position=V3(-1.45, 0.9, -2.6), size=V3(0.6, 0.6, 0.05), material=rubber3),
-    Cube(position=V3(-1.3, 0.9, -2.4), size=V3(0.1, 0.1, 0.05), material=rubber2),
-    Cube(position=V3(-0.17, 0.9, -2.6), size=V3(0.6, 0.6, 0.05), material=rubber3),
-    Cube(position=V3(-0.3, 0.9, -2.4), size=V3(0.1, 0.1, 0.05), material=rubber2),
+    Cube(position=V3(0.4, 0.9, -2.7), size=V3(0.2, 0.2, 0.05), material=rubber3),
+    Cube(position=V3(1.3, 0.9, -2.7), size=V3(0.2, 0.2, 0.05), material=rubber3),
+
+    
+    # ### PARDO ###
+    # Patas
+    Cube(position=V3(1, 0, -4), size=V3(0.7, 1, 0.7), material=rubber),
+    Cube(position=V3(-1, 0, -4), size=V3(0.7, 1, 0.7), material=rubber),
+    # # Cuerpos
+    Cube(position=V3(0.05, -1, -5.5), size=V3(2.4, 1.5, 4), material=rubber),
+    # # # Cara
+    Cube(position=V3(0, -1, -4), size=V3(2, 1, 2.5), material=rubber),
+    # # # # Orejas
+    Cube(position=V3(-0.25, -0.5, -0.8), size=V3(0.1, 0.1, 0.05), material=rubber),
+    Cube(position=V3(0.25, -0.5, -0.8), size=V3(0.1, 0.1, 0.05), material=rubber),
+    # # # # Nariz
+    Cube(position=V3(0, -0.8, -3), size=V3(0.8, 0.4, 1), material=rubber),
+    Cube(position=V3(0, -0.89, -2.5), size=V3(0.4, 0.2, 0.1), material=rubber3),
+    # # # # # Ojos
+    Cube(position=V3(-0.63, -1.1, -2.6), size=V3(0.6, 0.6, 0.05), material=rubber2),
+    Cube(position=V3(-0.48, -1.1, -2.55), size=V3(0.1, 0.1, 0.05), material=rubber3),
+    Cube(position=V3(0.68, -1.1, -2.6), size=V3(0.6, 0.6, 0.05), material=rubber2),
+    Cube(position=V3(0.55, -1.1, -2.55), size=V3(0.1, 0.1, 0.05), material=rubber3),
 ]
 
 r.render()
