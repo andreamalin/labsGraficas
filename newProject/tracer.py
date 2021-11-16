@@ -22,8 +22,9 @@ class Raytracer(object):
         self.aspectRatio = self.width/self.height # Para que las imagenes no tengan que ser cuadradas
         self.background_color = MAGENTA
         self.light = None
-        # self.texture = Texture('./textures/water2.bmp')
-        # self.texture.read()
+        self.texture = Texture('./textures/back3.bmp')
+        self.texture.read()
+
         self.glClear()
 
     # Limpia la imagen a color negro -> llena el framebuffer
@@ -39,7 +40,7 @@ class Raytracer(object):
     # Pintar un pixel -> recibe la posicion y color
     def glVertex(self, x, y, color = None):
         if (y < self.height and x < self.width):
-            self.framebuffer[y][x] = color or self.background_color
+            self.framebuffer[y][x] = color
         else:
             print(x, y)
 
@@ -182,7 +183,9 @@ class Raytracer(object):
 
 
 r = Raytracer(400, 400)
-r.light = Light(position=V3(-4.5, -25, 20), intensity=1, color=color(255, 255, 255))
+
+r.light = Light(position=V3(-4.5, -15, 20), intensity=1, color=color(255, 255, 255))
+# r.light = Light(position=V3(10, 10, 20), intensity=1, color=color(255, 255, 255))
 
 ivory = Material(diffuse=color(100, 100, 80), albedo=[0.6, 0.3, 0.1, 0], spec=50)
 rubber = Material(diffuse=color(0, 56, 78), albedo=[0.9, 0.1, 0, 0], spec=10)
@@ -191,11 +194,13 @@ rubber3 = Material(diffuse=color(0, 0, 0), albedo=[0.9, 0.1, 0, 0], spec=10)
 rubber4 = Material(diffuse=color(245, 245, 245), albedo=[0.9, 0.1, 0, 0], spec=10)
 rubber5 = Material(diffuse=color(209, 209, 209), albedo=[0.9, 0.1, 0, 0], spec=10)
 mirror = Material(diffuse=color(255, 255, 255), albedo=[0, 10, 0.8, 0], spec=1500)
-glass = Material(diffuse=color(255, 255, 255), albedo=[0, 0.5, 0.1, 0.5], spec=150, refractive_index=1.5)
+glass = Material(diffuse=color(153, 76, 0), albedo=[0, 0.5, 0.1, 0.5], spec=150, refractive_index=1.5)
 
 r.scene = [
+    # Base
+    Cube(position=V3(0, 4, -5), size=V3(8, 2, 5), material=mirror),
     ## PANDA ###
-    # Patas
+    # # Patas
     Cube(position=V3(-0.5, 2, -4), size=V3(0.7, 1, 0.7), material=rubber3),
     Cube(position=V3(-2.5, 2, -4), size=V3(0.7, 1, 0.7), material=rubber3),
     # Cuerpos
