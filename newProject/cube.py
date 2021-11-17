@@ -24,10 +24,10 @@ class Cube(object):
         ]
 
     def getBoxLimits(self, hit):
-        if (hit.point.x < self.minbox.x or self.maxbox.x < hit.point.x) and (hit.point.y < self.minbox.y or self.maxbox.y < hit.point.y) and (hit.point.z < self.minbox.z or self.maxbox.z < hit.point.z):
-            return True
-        else:
+        if (hit.point.x < self.minbox.x or self.maxbox.x < hit.point.x) or (hit.point.y < self.minbox.y or self.maxbox.y < hit.point.y) or (hit.point.z < self.minbox.z or self.maxbox.z < hit.point.z):
             return False
+        else:
+            return True
 
     # Obtengo si intersecta el rato
     def ray_intersect(self, orig, dir):
@@ -36,11 +36,8 @@ class Cube(object):
 
         for plane in self.box:
             hit = plane.ray_intersect(orig, dir)
-            if hit:
-                # Reviso que el rayo este dentro de mis limites
-                if (hit.point.x < self.minbox.x or self.maxbox.x < hit.point.x): continue
-                if (hit.point.y < self.minbox.y or self.maxbox.y < hit.point.y): continue
-                if (hit.point.z < self.minbox.z or self.maxbox.z < hit.point.z): continue
+            # Reviso que el rayo este dentro de mis limites
+            if hit and self.getBoxLimits(hit):
                 # Obtengo el ultimo resultado
                 if hit.distance < d:
                     d = hit.distance

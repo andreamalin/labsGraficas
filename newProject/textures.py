@@ -20,21 +20,17 @@ class Texture(object):
     def __init__(self, path):
         self.path = path
         self.colors = []
+        
+        self.read()
     
     def getColor(self, direction):
       direction = norm(direction)
 
       x = int((atan2(direction.z, direction.x) / (2 * pi) + 0.5) * self.width)
       y = int(acos(-direction.y) / pi * self.height)
-      index = (y * self.width + x) * 3 % len(self.pixels)
-
-      realColor = color(0, 0, 0)
-      try:
-          realColor = self.colors[index]
-      except:
-          realColor = color(0, 0, 0)
-
-      return realColor
+      index = (y * self.width + x) % len(self.colors)
+    
+      return self.colors[index]
 
     def read(self):
         image = open(self.path, 'rb')
