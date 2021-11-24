@@ -10,13 +10,13 @@ from OpenGL.GL import *
 from OpenGL.GL.shaders import compileProgram, compileShader
 import glm
 
-WIDTH = 800
-HEIGHT = 600
+WIDTH = 1200
+HEIGHT = 800
 ASPECT_RATIO = WIDTH/HEIGHT
 
 pygame.init()
 screen = pygame.display.set_mode((WIDTH, HEIGHT), pygame.OPENGL | pygame.DOUBLEBUF)
-glClearColor(0.1, 0.2, 0.5, 1.0)
+glClearColor(0, 0.4, 0.8, 1)
 glEnable(GL_DEPTH_TEST)
 clock = pygame.time.Clock()
 
@@ -186,7 +186,7 @@ def render(rotateY, rotateX, rotateZ):
   scale = glm.scale(i, glm.vec3(2, 2, 2))
 
   model = translate * rotate * scale
-  view = glm.lookAt(glm.vec3(0, 0, 30), glm.vec3(0, 0, 0), glm.vec3(0, 1, 0))
+  view = glm.lookAt(glm.vec3(0, 0, 35), glm.vec3(0, -1, 0), glm.vec3(0, 1, 0))
   projection = glm.perspective(glm.radians(45), ASPECT_RATIO, 0.1, 1000.0)
 
   theMatrix = projection * view * model
