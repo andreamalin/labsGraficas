@@ -129,7 +129,6 @@ print(len(mesh.vertices), len(mesh.tnormales), len(mesh.tvertices))
 vertex_data = numpy.hstack((
   numpy.array(mesh.vertices, dtype=numpy.float32),
   numpy.array(mesh.tnormales, dtype=numpy.float32),
-  numpy.array(mesh.tvertices, dtype=numpy.float32),
 )).flatten()
 
 index_data = numpy.array([[vertex[0] - 1 for vertex in face] for face in mesh.faces], dtype=numpy.uint32).flatten()
@@ -173,7 +172,7 @@ glEnableVertexAttribArray(1)
 
  # Atributos de textura de vértice
 glEnableVertexAttribArray(2)
-glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, 4 * 6, ctypes.c_void_p(24))
+glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, 4 * 6, ctypes.c_void_p(12))
 
 glUseProgram(shader2)
 
@@ -193,7 +192,7 @@ def render(rotateY, rotateX, rotateZ):
   scale = glm.scale(i, glm.vec3(2, 2, 2))
 
   model = translate * rotate * scale
-  view = glm.lookAt(glm.vec3(0, 0, 50), glm.vec3(0, 0, 0), glm.vec3(0, 1, 0))
+  view = glm.lookAt(glm.vec3(0, 0, 30), glm.vec3(0, 0, 0), glm.vec3(0, 1, 0))
   projection = glm.perspective(glm.radians(45), ASPECT_RATIO, 0.1, 1000.0)
 
   theMatrix = projection * view * model
@@ -228,7 +227,6 @@ while running:
   #   contador
   # )
 
-  glActiveTexture(GL_TEXTURE0)
   glUniform1i(
     glGetUniformLocation(shader2, 'texture'), 0
   )
