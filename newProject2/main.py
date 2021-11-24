@@ -1,12 +1,19 @@
 import pygame
 import numpy
+
+from transformations import *
+
 from obj import *
 from OpenGL.GL import *
 from OpenGL.GL.shaders import compileProgram, compileShader
 import glm
 
+WIDTH = 800
+HEIGHT = 500
+ASPECT_RATIO = WIDTH/HEIGHT
+
 pygame.init()
-screen = pygame.display.set_mode((1200, 720), pygame.OPENGL | pygame.DOUBLEBUF)
+screen = pygame.display.set_mode((WIDTH, HEIGHT), pygame.OPENGL | pygame.DOUBLEBUF)
 glClearColor(0.1, 0.2, 0.5, 1.0)
 glEnable(GL_DEPTH_TEST)
 clock = pygame.time.Clock()
@@ -91,19 +98,17 @@ glEnableVertexAttribArray(1)
 
 glUseProgram(shader)
 
-
-from math import sin
-
-def render(a):
+def render(rotateY, rotateX, rotateZ):
   i = glm.mat4(1)
 
-  translate = glm.translate(i, glm.vec3(0, 0, 0))
-  rotate = glm.rotate(i, glm.radians(a), glm.vec3(0, 1, 0))
+  translate = glm.translate(i, glm.vec3(-1.5, -2, 0))
+  # rotate = glm.rotate(i, glm.radians(a), glm.vec3(0, 1, 0))
+  rotate = rotationMatrix((rotateX, rotateY, rotateZ))
   scale = glm.scale(i, glm.vec3(2, 2, 2))
 
   model = translate * rotate * scale
-  view = glm.lookAt(glm.vec3(10, 0, 30), glm.vec3(0, 0, 0), glm.vec3(0, 1, 0))
-  projection = glm.perspective(glm.radians(45), 1200/720, 0.1, 1000.0)
+  view = glm.lookAt(glm.vec3(0, 0, 30), glm.vec3(0, 0, 0), glm.vec3(0, 1, 0))
+  projection = glm.perspective(glm.radians(45), ASPECT_RATIO, 0.1, 1000.0)
 
   theMatrix = projection * view * model
 
@@ -114,14 +119,20 @@ def render(a):
     glm.value_ptr(theMatrix)
   )
 
-glViewport(0, 0, 1200, 720)
+glViewport(0, 0, WIDTH, HEIGHT)
 
 a = 0
+
+
 running = True
+rotateX = 0
+rotateY = 0
+rotateZ = 0
+
 while running:
   glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT)
 
-  render(a)
+  render(rotateX, rotateY, rotateZ)
   a += 1
 
   glUniform1i(
@@ -138,6 +149,15 @@ while running:
     if event.type == pygame.QUIT:
       running = False
     if event.type == pygame.KEYDOWN:
-      if event.key == pygame.K_a:
-        glPolygonMode(GL_FRONT_AND_BACK, GL_LINE)
-  
+      if event.key == pygame.K_KP1:
+        rotateZ += 0.1
+      elif event.key == pygame.K_KP9:
+        rotateZ -= 0.1
+      elif event.key == pygame.K_KP8:
+        rotateY += 0.1
+      elif event.key == pygame.K_KP2:
+        rotateY -= 0.1
+      elif event.key == pygame.K_KP6:
+        rotateX += 0.1
+      elif event.key == pygame.K_KP4:
+        rotateX -= 0.1
