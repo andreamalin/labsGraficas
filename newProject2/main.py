@@ -9,7 +9,7 @@ from OpenGL.GL.shaders import compileProgram, compileShader
 import glm
 
 WIDTH = 800
-HEIGHT = 500
+HEIGHT = 600
 ASPECT_RATIO = WIDTH/HEIGHT
 
 pygame.init()
@@ -101,13 +101,12 @@ glUseProgram(shader)
 def render(rotateY, rotateX, rotateZ):
   i = glm.mat4(1)
 
-  translate = glm.translate(i, glm.vec3(-1.5, -2, 0))
-  # rotate = glm.rotate(i, glm.radians(a), glm.vec3(0, 1, 0))
+  translate = glm.translate(i, glm.vec3(-1.5, -2, -2))
   rotate = rotationMatrix((rotateX, rotateY, rotateZ))
   scale = glm.scale(i, glm.vec3(2, 2, 2))
 
   model = translate * rotate * scale
-  view = glm.lookAt(glm.vec3(0, 0, 30), glm.vec3(0, 0, 0), glm.vec3(0, 1, 0))
+  view = glm.lookAt(glm.vec3(0, 0, 50), glm.vec3(0, 0, 0), glm.vec3(0, 1, 0))
   projection = glm.perspective(glm.radians(45), ASPECT_RATIO, 0.1, 1000.0)
 
   theMatrix = projection * view * model
@@ -121,33 +120,38 @@ def render(rotateY, rotateX, rotateZ):
 
 glViewport(0, 0, WIDTH, HEIGHT)
 
-a = 0
 
-
+# Variables
 running = True
 rotateX = 0
 rotateY = 0
 rotateZ = 0
+contador = 0
 
 while running:
   glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT)
 
+  # Para mostrar el modelo y darle movimiento
   render(rotateX, rotateY, rotateZ)
-  a += 1
+  contador += 1
 
+  # Enteros
   glUniform1i(
     glGetUniformLocation(shader, 'clock'),
-    a
+    contador
   )
 
+  # Para especificar el tipo -> GL_TRIANGLES rellena mientras GL_LINE_LOOP une los puntos con lineas
   glDrawElements(GL_TRIANGLES, len(index_data), GL_UNSIGNED_INT, None)
 
+  # Vamos cambiando de buffer
   pygame.display.flip()
   clock.tick(15)
 
   for event in pygame.event.get():
     if event.type == pygame.QUIT:
       running = False
+    # Movimiento del modelo usando el keypad
     if event.type == pygame.KEYDOWN:
       if event.key == pygame.K_KP1:
         rotateZ += 0.1
