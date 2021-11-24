@@ -207,6 +207,7 @@ rotateY = 0
 rotateZ = 0
 contador = 0
 actualShader = shader2
+shaderCounter = 0
 
 while running:
   glUseProgram(actualShader)
@@ -244,4 +245,9 @@ while running:
       elif event.key == pygame.K_KP4:
         rotateX -= 0.1
       elif event.key == pygame.K_a:
-        actualShader = shader
+        if (shaderCounter == 0):
+          actualShader = shader
+          shaderCounter = 1
+        else:
+          actualShader = shader2
+          shaderCounter = 0
