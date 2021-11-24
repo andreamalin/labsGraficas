@@ -77,10 +77,8 @@ textureID = glGenTextures(1);
 glBindTexture(GL_TEXTURE_2D, textureID);
 
 # Crear la textura
-glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP)
-glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP)
-glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR)
-glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR)
+glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, img.size[0], img.size[1], 0, GL_RGB, GL_UNSIGNED_BYTE, pixels)
 
 
@@ -125,7 +123,6 @@ shader2 = compileProgram(cvs2, cfs2)
 
 mesh = Obj('./dolphin.obj')
 
-print(len(mesh.vertices), len(mesh.tnormales), len(mesh.tvertices))
 vertex_data = numpy.hstack((
   numpy.array(mesh.vertices, dtype=numpy.float32),
   numpy.array(mesh.tnormales, dtype=numpy.float32),
@@ -164,20 +161,17 @@ glVertexAttribPointer(
   GL_FLOAT, # tipo
   GL_FALSE, # normalizados
   4 * 6, # stride
-  ctypes.c_void_p(4 * 3)
+  ctypes.c_void_p(12)
 )
 glEnableVertexAttribArray(1)
 
 
 
- # Atributos de textura de vértice
+# Atributos de textura de vértice
 glEnableVertexAttribArray(2)
-glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, 4 * 6, ctypes.c_void_p(12))
+glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 4 * 6, ctypes.c_void_p(24))
 
 glUseProgram(shader2)
-
-
-
 
 
 
@@ -220,15 +214,8 @@ while running:
   # Para mostrar el modelo y darle movimiento
   render(rotateX, rotateY, rotateZ)
   contador += 1
-
-  # Enteros
-  # glUniform1i(
-  #   glGetUniformLocation(shader2, 'clock'),
-  #   contador
-  # )
-
   glUniform1i(
-    glGetUniformLocation(shader2, 'texture'), 0
+    glGetUniformLocation(shader2, 'clock'), contador
   )
 
   # Para especificar el tipo -> GL_TRIANGLES rellena mientras GL_LINE_LOOP une los puntos con lineas
