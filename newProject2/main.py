@@ -1,7 +1,9 @@
 import pygame
 import numpy
+from PIL import Image
 
 from transformations import *
+from textures import Texture
 
 from obj import *
 from OpenGL.GL import *
@@ -45,9 +47,9 @@ in vec3 mycolor;
 void main()
 {
   if (mod(clock/10, 2) == 0) {
-    fragColor = vec4(mycolor.xyz, 1.0f);
+    fragColor = vec4(0, 0, 255, 1.0f);
   } else {
-    fragColor = vec4(mycolor.zxy, 1.0f);
+    fragColor = vec4(0, 0, 255, 1.0f);
   }
 }
 """
@@ -57,11 +59,77 @@ cfs = compileShader(fragment_shader, GL_FRAGMENT_SHADER)
 
 shader = compileProgram(cvs, cfs)
 
+
+
+
+
+
+
+
+
+# Textura
+img = Image.open('clouds.bmp') # .jpg, .bmp, etc. also work
+pixels = numpy.array(list(img.getdata()), numpy.int8)
+
+textureID = glGenTextures(1);
+
+# GL_TEXTURE_2Dla textura es un arreglo de pixeles de 2 dimensiones
+glBindTexture(GL_TEXTURE_2D, textureID);
+
+# Crear la textura
+glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP)
+glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP)
+glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR)
+glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR)
+glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, img.size[0], img.size[1], 0, GL_RGB, GL_UNSIGNED_BYTE, pixels)
+
+
+vertex_shader2 = """
+#version 460
+
+layout (location = 0) in vec3 position;
+layout (location = 1) in vec2 vTexture;
+
+uniform mat4 theMatrix;
+
+out vec2 texCoord;
+
+void main()
+{
+     gl_Position = theMatrix * vec4(position.x, position.y, position.z, 1);
+     texCoord = vTexture; 
+}
+"""
+
+fragment_shader2 = """
+#version 460
+in vec2 texCoord;
+out vec4 color;
+
+uniform sampler2D myTexture;
+
+void main()
+{
+       color = texture(myTexture, texCoord);
+}
+"""
+
+cvs2 = compileShader(vertex_shader2, GL_VERTEX_SHADER)
+cfs2 = compileShader(fragment_shader2, GL_FRAGMENT_SHADER)
+
+shader2 = compileProgram(cvs2, cfs2)
+
+
+
+
+
 mesh = Obj('./dolphin.obj')
 
+print(len(mesh.vertices), len(mesh.tnormales), len(mesh.tvertices))
 vertex_data = numpy.hstack((
   numpy.array(mesh.vertices, dtype=numpy.float32),
   numpy.array(mesh.tnormales, dtype=numpy.float32),
+  numpy.array(mesh.tvertices, dtype=numpy.float32),
 )).flatten()
 
 index_data = numpy.array([[vertex[0] - 1 for vertex in face] for face in mesh.faces], dtype=numpy.uint32).flatten()
@@ -69,6 +137,7 @@ index_data = numpy.array([[vertex[0] - 1 for vertex in face] for face in mesh.fa
 vertex_buffer_object = glGenBuffers(1)
 glBindBuffer(GL_ARRAY_BUFFER, vertex_buffer_object)
 glBufferData(GL_ARRAY_BUFFER, vertex_data.nbytes, vertex_data, GL_STATIC_DRAW)
+
 
 vertex_array_object = glGenVertexArrays(1)
 glBindVertexArray(vertex_array_object)
@@ -81,6 +150,10 @@ glVertexAttribPointer(
   ctypes.c_void_p(0)
 )
 glEnableVertexAttribArray(0)
+
+
+
+
 
 element_buffer_object = glGenBuffers(1)
 glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, element_buffer_object)
@@ -96,7 +169,21 @@ glVertexAttribPointer(
 )
 glEnableVertexAttribArray(1)
 
-glUseProgram(shader)
+
+
+ # Atributos de textura de vértice
+glEnableVertexAttribArray(2)
+glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, 4 * 6, ctypes.c_void_p(24))
+
+glUseProgram(shader2)
+
+
+
+
+
+
+
+
 
 def render(rotateY, rotateX, rotateZ):
   i = glm.mat4(1)
@@ -112,7 +199,7 @@ def render(rotateY, rotateX, rotateZ):
   theMatrix = projection * view * model
 
   glUniformMatrix4fv(
-    glGetUniformLocation(shader, 'theMatrix'),
+    glGetUniformLocation(shader2, 'theMatrix'),
     1,
     GL_FALSE,
     glm.value_ptr(theMatrix)
@@ -136,9 +223,14 @@ while running:
   contador += 1
 
   # Enteros
+  # glUniform1i(
+  #   glGetUniformLocation(shader2, 'clock'),
+  #   contador
+  # )
+
+  glActiveTexture(GL_TEXTURE0)
   glUniform1i(
-    glGetUniformLocation(shader, 'clock'),
-    contador
+    glGetUniformLocation(shader2, 'texture'), 0
   )
 
   # Para especificar el tipo -> GL_TRIANGLES rellena mientras GL_LINE_LOOP une los puntos con lineas
