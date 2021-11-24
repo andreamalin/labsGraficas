@@ -47,9 +47,9 @@ in vec3 mycolor;
 void main()
 {
   if (mod(clock/10, 2) == 0) {
-    fragColor = vec4(0, 0, 255, 1.0f);
+    fragColor = vec4(mycolor.xyz, 1.0f);
   } else {
-    fragColor = vec4(0, 0, 255, 1.0f);
+    fragColor = vec4(mycolor.zxy, 1.0f);
   }
 }
 """
@@ -171,14 +171,13 @@ glEnableVertexAttribArray(1)
 glEnableVertexAttribArray(2)
 glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 4 * 6, ctypes.c_void_p(24))
 
-glUseProgram(shader2)
 
 
 
 
 
 
-def render(rotateY, rotateX, rotateZ):
+def render(rotateY, rotateX, rotateZ, actualShader):
   i = glm.mat4(1)
 
   translate = glm.translate(i, glm.vec3(-1.5, -2, -2))
@@ -192,7 +191,7 @@ def render(rotateY, rotateX, rotateZ):
   theMatrix = projection * view * model
 
   glUniformMatrix4fv(
-    glGetUniformLocation(shader2, 'theMatrix'),
+    glGetUniformLocation(actualShader, 'theMatrix'),
     1,
     GL_FALSE,
     glm.value_ptr(theMatrix)
@@ -207,15 +206,17 @@ rotateX = 0
 rotateY = 0
 rotateZ = 0
 contador = 0
+actualShader = shader2
 
 while running:
+  glUseProgram(actualShader)
   glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT)
 
   # Para mostrar el modelo y darle movimiento
-  render(rotateX, rotateY, rotateZ)
+  render(rotateX, rotateY, rotateZ, actualShader)
   contador += 1
   glUniform1i(
-    glGetUniformLocation(shader2, 'clock'), contador
+    glGetUniformLocation(actualShader, 'clock'), contador
   )
 
   # Para especificar el tipo -> GL_TRIANGLES rellena mientras GL_LINE_LOOP une los puntos con lineas
@@ -242,3 +243,5 @@ while running:
         rotateX += 0.1
       elif event.key == pygame.K_KP4:
         rotateX -= 0.1
+      elif event.key == pygame.K_a:
+        actualShader = shader
