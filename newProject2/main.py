@@ -3,12 +3,12 @@ import numpy
 from PIL import Image
 
 from transformations import *
-from textures import Texture
 
 from obj import *
 from OpenGL.GL import *
 from OpenGL.GL.shaders import compileProgram, compileShader
 import glm
+import random
 
 WIDTH = 1200
 HEIGHT = 800
@@ -48,6 +48,8 @@ void main()
 {
   if (mod(clock/10, 2) == 0) {
     fragColor = vec4(mycolor.xyz, 1.0f);
+  } else if (mod(clock/10, 3) == 0) {
+    fragColor = vec4(mycolor.yzx, 1.0f);
   } else {
     fragColor = vec4(mycolor.zxy, 1.0f);
   }
@@ -68,8 +70,8 @@ shader = compileProgram(cvs, cfs)
 
 
 # Textura
-img = Image.open('clouds.bmp') # .jpg, .bmp, etc. also work
-pixels = numpy.array(list(img.getdata()), numpy.int8)
+img = Image.open('clouds.bmp') # la leo
+pixels = numpy.array(list(img.getdata()), numpy.int8) # Obtengo los pixeles
 
 textureID = glGenTextures(1);
 
@@ -116,6 +118,30 @@ cvs2 = compileShader(vertex_shader2, GL_VERTEX_SHADER)
 cfs2 = compileShader(fragment_shader2, GL_FRAGMENT_SHADER)
 
 shader2 = compileProgram(cvs2, cfs2)
+
+
+
+
+fragment_shader3 = """
+#version 460
+layout(location = 0) out vec4 fragColor;
+uniform vec3 color;
+
+void main()
+{
+  fragColor = vec4(color.xyz, 1.0f);
+}
+"""
+
+cvs3 = compileShader(vertex_shader, GL_VERTEX_SHADER)
+cfs3 = compileShader(fragment_shader3, GL_FRAGMENT_SHADER)
+
+shader3 = compileProgram(cvs3, cfs3)
+
+
+
+
+
 
 
 
@@ -216,16 +242,28 @@ while running:
   # Para mostrar el modelo y darle movimiento
   render(rotateX, rotateY, rotateZ, actualShader)
   contador += 1
-  glUniform1i(
-    glGetUniformLocation(actualShader, 'clock'), contador
-  )
+
+  if (actualShader != shader3):
+      glUniform1i(
+        glGetUniformLocation(actualShader, 'clock'), contador
+      )
+  else:
+      r = random.uniform(0, 1)
+      g = random.uniform(0, 1)
+      b = random.uniform(0, 1)
+
+      glUniform3f(
+        glGetUniformLocation(actualShader, 'color'), r, g, b
+      )
+  
+  
 
   # Para especificar el tipo -> GL_TRIANGLES rellena mientras GL_LINE_LOOP une los puntos con lineas
   glDrawElements(GL_TRIANGLES, len(index_data), GL_UNSIGNED_INT, None)
 
   # Vamos cambiando de buffer
   pygame.display.flip()
-  clock.tick(15)
+  clock.tick(1)
 
   for event in pygame.event.get():
     if event.type == pygame.QUIT:
@@ -233,21 +271,24 @@ while running:
     # Movimiento del modelo usando el keypad
     if event.type == pygame.KEYDOWN:
       if event.key == pygame.K_KP1:
-        rotateZ += 0.1
+        rotateZ += 0.5
       elif event.key == pygame.K_KP9:
-        rotateZ -= 0.1
+        rotateZ -= 0.5
       elif event.key == pygame.K_KP8:
-        rotateY += 0.1
+        rotateY += 0.5
       elif event.key == pygame.K_KP2:
-        rotateY -= 0.1
+        rotateY -= 0.5
       elif event.key == pygame.K_KP6:
-        rotateX += 0.1
+        rotateX += 0.5
       elif event.key == pygame.K_KP4:
-        rotateX -= 0.1
+        rotateX -= 0.5
       elif event.key == pygame.K_a:
         if (shaderCounter == 0):
           actualShader = shader
-          shaderCounter = 1
-        else:
+        elif (shaderCounter == 2):
           actualShader = shader2
-          shaderCounter = 0
+        else:
+          actualShader = shader3
+
+        shaderCounter += 1
+        shaderCounter = shaderCounter % 3
