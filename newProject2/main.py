@@ -263,7 +263,7 @@ while running:
 
   # Vamos cambiando de buffer
   pygame.display.flip()
-  clock.tick(1)
+  clock.tick(15)
 
   for event in pygame.event.get():
     if event.type == pygame.QUIT:
